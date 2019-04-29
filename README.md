@@ -1,0 +1,1 @@
+﻿This is converter from ZeronerHealthPro to Sporstracker GPX
