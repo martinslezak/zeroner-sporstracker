@@ -9,7 +9,7 @@ namespace ZeronerSporstracker
         public int R;
         public ulong T;
         public int V;
-        public int X;
-        public int Y;
+        public double X;
+        public double Y;
     }
 }

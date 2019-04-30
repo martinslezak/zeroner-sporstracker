@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "ZeronerSporstracker": {
+      "commandName": "Project",
+      "commandLineArgs": "test.txt output.txt"
+    }
+  }
+}
