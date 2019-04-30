@@ -30,6 +30,12 @@ namespace ZeronerSporstracker
                 return;
             }
 
+            if (!WriteOutput(outputFile, recs))
+            {
+                Console.WriteLine($"Error in writing output file...");
+                return;
+            }
+
 
             Console.WriteLine("DONE");
         }
@@ -66,6 +72,65 @@ namespace ZeronerSporstracker
             }
 
             return true;
+        }
+
+        static bool WriteOutput(string path, ZeronerHealthPro[] recs)
+        {
+            using (Stream file = File.OpenWrite(path))
+            {
+                var serializer = new System.Xml.Serialization.XmlSerializer(typeof(gpx));
+                var st = new Sportstracker()
+                {
+                    gpx = new gpx()
+                };
+
+                st.gpx.metadata = new Metadata()
+                {
+                    name = "Test 1",
+                    desc = "Desc of Test 1",
+                    author = new Author()
+                    {
+                        name = "Martin Slezak"
+                    }
+                };
+
+                //st.gpx.trk = new Track()
+                //{
+                //    trkseg = new TrackSegment()
+                //};
+
+                //st.gpx.trk.trkseg.trkpt = new TrackPoint[recs.Length];
+                //st.gpx.trk.trkseg = new TrackPoint[recs.Length];
+                st.gpx.trk = new Track()
+                {
+                    trkseg = new TrackPoint[recs.Length]
+                };
+
+                uint idx = 0;
+                foreach (var r in recs)
+                {
+                    var trkpt = new TrackPoint()
+                    {
+                        lat = r.Y,
+                        lon = r.X,
+                        ele = r.V,
+                        time = UnixTimeStampToDateTime(r.T)
+                    };
+
+                    st.gpx.trk.trkseg[idx++] = trkpt;
+                }
+
+                serializer.Serialize(file, st.gpx);
+            }
+            return true;
+        }
+
+        public static DateTime UnixTimeStampToDateTime(double unixTimeStamp)
+        {
+            // Unix timestamp is seconds past epoch
+            System.DateTime dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc);
+            dtDateTime = dtDateTime.AddSeconds(unixTimeStamp).ToLocalTime();
+            return dtDateTime;
         }
     }
 }
